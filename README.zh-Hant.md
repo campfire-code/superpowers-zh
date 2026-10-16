@@ -74,20 +74,6 @@ Chinese community edition of [superpowers](https://github.com/obra/superpowers) 
 <table>
 <tr>
 <td width="25%">
-  <a href="https://go.apimart.ai/gh-superpowers-zh">
-    <img src="assets/sponsors/apimart.jpg" alt="APIMart —— 專注 AI 圖片/影片生成的低價 API 平台，GPT-Image-2 低至 $0.006/張，1 美元可出圖 160+ 張" width="100%">
-  </a>
-</td>
-<td width="75%" valign="middle">
-
-感謝 [APIMart](https://go.apimart.ai/gh-superpowers-zh) 贊助了本專案！APIMart 是專注 AI 圖片/影片生成的低價 API 平台，**GPT-Image-2 低至 $0.006/張**，1 美元可出圖 160+ 張。圖片、影片一套非同步 API 通吃，提交任務拿 ID、回呼取結果，跑批萬張不逾時、換模型不改程式碼。按量付費、無月費，🎁 **透過[此連結](https://go.apimart.ai/gh-superpowers-zh)註冊即可開用！**
-
-</td>
-</tr>
-</table>
-<table>
-<tr>
-<td width="25%">
   <a href="https://www.volcengine.com/activity/ai618?utm_source=OWO&utm_medium=devrel-1&utm_campaign=hw&utm_term=superpowers-zh&utm_content=hw">
     <img src="assets/sponsors/volcengine.png" alt="字節火山引擎 —— 火山方舟 Agent/Coding Plan 國模套餐首購 9.9，註冊免費領 2500w Token" width="100%">
   </a>
@@ -109,20 +95,6 @@ Chinese community edition of [superpowers](https://github.com/obra/superpowers) 
 <td width="75%" valign="middle">
 
 感謝 [Sidrune AI](https://sidrune.ai/register?source=github&campaign=superpowers&promo=superpowers&aff=RQHWKAMQLX2S) 贊助本專案！一個入口，接入並管理全球主流 AI 模型。Sidrune AI 面向個人開發者、技術團隊與企業，透過統一 API 接入並管理全球主流 AI 模型；透過多線路動態調度提升可用性，模型表現、回應時間與費用透明可查。依不同模型與線路，API 呼叫成本較官方或基準價格可降低 **40%—98%**。🎁 **透過[此連結](https://sidrune.ai/register?source=github&campaign=superpowers&promo=superpowers&aff=RQHWKAMQLX2S)註冊即可獲得 $3 API 額度！**
-
-</td>
-</tr>
-</table>
-<table>
-<tr>
-<td width="25%">
-  <a href="https://passport.compshare.cn/register?referral_code=ETD3L5JBM13CtKARkMORot&ytag=GPU_YY_YX_git_superpowers-zh">
-    <img src="assets/sponsors/compshare.jpg" alt="優雲智算 by UCloud — 熱門國產模型按次調用套餐包，低至 49 元/月起" width="100%">
-  </a>
-</td>
-<td width="75%" valign="middle">
-
-感謝 [優雲智算](https://passport.compshare.cn/register?referral_code=ETD3L5JBM13CtKARkMORot&ytag=GPU_YY_YX_git_superpowers-zh) 贊助本專案！優雲智算是 UCloud 旗下 AI 雲平台，主打包月、按次的高性價比國模 Agent Plan 方案，支援 GLM-5.2，低至 **49 元/月**起。最新上線 H3 影片生成套餐包，768P 低至 8 分/秒，支援 2K 畫質，最長 30s 影片生成。支援企業高併發、7×24 技術支援、自助開票。🎁 **透過[此連結](https://passport.compshare.cn/register?referral_code=ETD3L5JBM13CtKARkMORot&ytag=GPU_YY_YX_git_superpowers-zh)註冊的使用者，可得免費 5 元平台體驗金！**
 
 </td>
 </tr>
