@@ -100,10 +100,19 @@ jobs:
         with:
           node-version: '20'
 
+      # runner 默认 TEMP 是 8.3 短路径（C:\Users\RUNNER~1\...），测试把 LOCALAPPDATA 指到
+      # mktemp 目录下，where 返回的长路径与短路径字符串比较对不上，会误报 WindowsApps 用例。
+      # 真实机器上 PATH 里的 WindowsApps 由同一个 LOCALAPPDATA 展开，不存在这种不一致。
       - name: Test run-hook.cmd (cmd half)
         shell: bash
-        run: bash tests/hooks/test-run-hook-cmd-windows.sh
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: |
+          echo "default TEMP: $(cmd //c echo %TEMP%)  TMPDIR: $TMPDIR"
+          bash tests/hooks/test-run-hook-cmd-windows.sh
 
       - name: Test SessionStart hook
         shell: bash
+        env:
+          TMPDIR: ${{ runner.temp }}
         run: bash tests/hooks/test-session-start.sh
