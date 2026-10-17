@@ -17,6 +17,16 @@ fail() {
     FAILURES=$((FAILURES + 1))
 }
 
+# Push a path through the same `cd ... && pwd` normalization that
+# sdd-workspace's own printed output goes through, so both sides of a
+# string comparison are guaranteed to be spelled identically. On Windows
+# Git Bash/MSYS, `git rev-parse --show-toplevel` (Windows-style,
+# C:/Users/...) and `cd ... && pwd` (MSYS-style, /c/Users/...) can print
+# different spellings of the identical physical directory; on Linux/macOS
+# this is a no-op since the two already agree (module the resolved-symlink
+# /var -> /private/var case handled by the mktemp comment above).
+physical_path() { (cd "$1" && pwd); }
+
 cleanup() {
     if [[ -n "$TEST_ROOT" && -d "$TEST_ROOT" ]]; then
         rm -rf "$TEST_ROOT"
@@ -35,6 +45,7 @@ main() {
     git init -q -b main "$TEST_ROOT/repo"
     local repo
     repo="$(cd "$TEST_ROOT/repo" && git rev-parse --show-toplevel)"
+    repo="$(physical_path "$repo")"
 
     cat > "$repo/plan-a.md" <<'PLAN'
 # Plan A
@@ -118,28 +129,6 @@ PLAN
         echo "    staged: $staged"
     fi
 
-    # --- caller-owned ignore rules survive workspace resolution ---
-    local custom_repo="$TEST_ROOT/custom-ignore"
-    git init -q -b main "$custom_repo"
-    cp "$repo/plan-a.md" "$custom_repo/plan.md"
-    mkdir -p "$custom_repo/.superpowers/sdd"
-    printf '*\n!*/\n!progress.md\n' > "$TEST_ROOT/expected-ignore"
-    cp "$TEST_ROOT/expected-ignore" "$custom_repo/.superpowers/sdd/.gitignore"
-    (cd "$custom_repo" && "$SDD_SCRIPTS/sdd-workspace" plan.md >/dev/null)
-    if cmp -s "$TEST_ROOT/expected-ignore" "$custom_repo/.superpowers/sdd/.gitignore"; then
-        pass "sdd-workspace preserves custom ignore rules verbatim"
-    else
-        fail "sdd-workspace preserves custom ignore rules verbatim"
-    fi
-    # An intentionally empty ignore file must also remain caller-owned.
-    : > "$custom_repo/.superpowers/sdd/.gitignore"
-    (cd "$custom_repo" && "$SDD_SCRIPTS/sdd-workspace" plan.md >/dev/null)
-    if [[ -f "$custom_repo/.superpowers/sdd/.gitignore" && ! -s "$custom_repo/.superpowers/sdd/.gitignore" ]]; then
-        pass "sdd-workspace preserves an existing empty ignore file"
-    else
-        fail "sdd-workspace preserves an existing empty ignore file"
-    fi
-
     # --- task-brief lands in its plan's directory ---
     local brief_out brief_path
     brief_out="$(cd "$repo" && "$SDD_SCRIPTS/task-brief" plan-a.md 1)"
@@ -216,6 +205,7 @@ PLAN
     ( cd "$repo" && git worktree add -q "$wt" -b wt-feature )
     local wt_root wt_dir
     wt_root="$(cd "$wt" && git rev-parse --show-toplevel)"
+    wt_root="$(physical_path "$wt_root")"
     wt_dir="$(cd "$wt" && "$SDD_SCRIPTS/sdd-workspace" plan-a.md)"
     if [[ "$wt_dir" == "$wt_root/.superpowers/sdd/plan-a" && "$wt_dir" != "$dir_a" ]]; then
         pass "linked worktree resolves its own distinct workspace"
@@ -370,6 +360,38 @@ PLAN
         fail "out-of-repo plan gets a basename slug and an absolute-path marker"
         echo "    dir:    $dir_out"
         echo "    marker: $(cat "$dir_out/plan-path" 2>/dev/null)"
+    fi
+
+    # --- A repo's own committed .superpowers/sdd/.gitignore is left alone ---
+    git init -q -b main "$TEST_ROOT/own-ignore"
+    local own own_ignore
+    own="$(cd "$TEST_ROOT/own-ignore" && git rev-parse --show-toplevel)"
+    own_ignore=$'*\n!.gitignore\n!*/\n!*/progress.md'
+    mkdir -p "$own/.superpowers/sdd"
+    printf '%s\n' "$own_ignore" > "$own/.superpowers/sdd/.gitignore"
+    printf '# Plan\n\n## Task 1: One\n\nOne.\n' > "$own/plan.md"
+    (cd "$own" && git add -A && git -c user.name=t -c user.email=t@t commit -qm init)
+    (cd "$own" && "$SDD_SCRIPTS/sdd-workspace" plan.md >/dev/null)
+    if [[ "$(cat "$own/.superpowers/sdd/.gitignore")" == "$own_ignore" \
+        && -z "$(cd "$own" && git status --porcelain -- .superpowers/sdd/.gitignore)" ]]; then
+        pass "an existing .superpowers/sdd/.gitignore is not overwritten"
+    else
+        fail "an existing .superpowers/sdd/.gitignore is not overwritten"
+        echo "    now: $(cat "$own/.superpowers/sdd/.gitignore")"
+    fi
+
+    # --- fork 增补：有意留空的 ignore 文件同样归调用方所有，不能被补写成 * ---
+    git init -q -b main "$TEST_ROOT/empty-ignore"
+    local empty_repo
+    empty_repo="$(cd "$TEST_ROOT/empty-ignore" && git rev-parse --show-toplevel)"
+    mkdir -p "$empty_repo/.superpowers/sdd"
+    : > "$empty_repo/.superpowers/sdd/.gitignore"
+    printf '# Plan\n\n## Task 1: One\n\nOne.\n' > "$empty_repo/plan.md"
+    (cd "$empty_repo" && "$SDD_SCRIPTS/sdd-workspace" plan.md >/dev/null)
+    if [[ -f "$empty_repo/.superpowers/sdd/.gitignore" && ! -s "$empty_repo/.superpowers/sdd/.gitignore" ]]; then
+        pass "an existing empty .superpowers/sdd/.gitignore stays empty"
+    else
+        fail "an existing empty .superpowers/sdd/.gitignore stays empty"
     fi
 
     echo ""

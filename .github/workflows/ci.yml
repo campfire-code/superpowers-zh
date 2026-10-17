@@ -132,3 +132,9 @@ jobs:
         env:
           TMPDIR: ${{ runner.temp }}
         run: bash tests/hooks/test-session-start.sh
+
+      - name: Test SDD workspace
+        shell: bash
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: bash tests/claude-code/test-sdd-workspace.sh
