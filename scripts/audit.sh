@@ -462,7 +462,8 @@ check_count .cursor-plugin/plugin.json      '等 [0-9]+ 款工具'      'cursor 
 # ── 官网（三语言） ──
 # 官网文案的工具数由 {toolCount} = TOOLS 条目数生成（下方结构性检查卡死条目数），
 # FAQ 枚举清单的条数由 build.mjs 构建期断言。这里只防有人重新手写数字。
-site_literal=$(grep -nE "[0-9]+ (款 AI 编程工具|款 AI 編程工具|款工具通用|AI coding tools|tools'|tools: )|共 [0-9]+ 款：" site/build.mjs || true)
+# bookDesc 是三卷书的介绍（书中教程覆盖的工具数），不是本项目支持的工具数，排除。
+site_literal=$(grep -nE "[0-9]+ (款 AI 编程工具|款 AI 編程工具|款工具通用|AI coding tools|tools'|tools: )|共 [0-9]+ 款：" site/build.mjs | grep -v 'bookDesc:' || true)
 if [ -z "$site_literal" ]; then ok; else
   bad "官网文案手写了工具数，应改用 {toolCount}：$(echo "$site_literal" | head -1 | cut -c1-80)"
 fi
