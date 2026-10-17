@@ -57,6 +57,16 @@ jobs:
           fi
           echo "All skills validated successfully"
 
+      - name: Check skill bodies for argument placeholders
+        run: |
+          # Claude Code 带参数调用 skill 时，会把 SKILL.md 正文里的 $0-$9 / $ARGUMENTS
+          # 替换成参数（如 awk '{print $1}' 变成 awk '{print 2}'）。示例改用 ${1}、cut、? 占位符等。
+          if grep -nE '\$([0-9]|ARGUMENTS)' skills/*/SKILL.md; then
+            echo "::error::SKILL.md 正文含会被参数替换的占位符（见上）"
+            exit 1
+          fi
+          echo "No argument placeholders in skill bodies"
+
       - name: Check package.json
         run: |
           node -e "
