@@ -13,6 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Count skills
         run: |
           TOTAL=$(ls -d skills/*/ 2>/dev/null | wc -l)
@@ -68,3 +72,14 @@ jobs:
 
       - name: Validate install script
         run: node bin/superpowers-zh.js --help
+
+      - name: Test plan bookkeeping and workspace protection
+        run: |
+          bash tests/claude-code/test-executing-plans-scripts.sh
+          bash tests/claude-code/test-sdd-workspace.sh
+
+      - name: Verify installer lifecycle
+        run: bash scripts/verify-release.sh --offline
+
+      - name: Build site
+        run: node site/build.mjs
