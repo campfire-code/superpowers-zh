@@ -118,6 +118,28 @@ PLAN
         echo "    staged: $staged"
     fi
 
+    # --- caller-owned ignore rules survive workspace resolution ---
+    local custom_repo="$TEST_ROOT/custom-ignore"
+    git init -q -b main "$custom_repo"
+    cp "$repo/plan-a.md" "$custom_repo/plan.md"
+    mkdir -p "$custom_repo/.superpowers/sdd"
+    printf '*\n!*/\n!progress.md\n' > "$TEST_ROOT/expected-ignore"
+    cp "$TEST_ROOT/expected-ignore" "$custom_repo/.superpowers/sdd/.gitignore"
+    (cd "$custom_repo" && "$SDD_SCRIPTS/sdd-workspace" plan.md >/dev/null)
+    if cmp -s "$TEST_ROOT/expected-ignore" "$custom_repo/.superpowers/sdd/.gitignore"; then
+        pass "sdd-workspace preserves custom ignore rules verbatim"
+    else
+        fail "sdd-workspace preserves custom ignore rules verbatim"
+    fi
+    # An intentionally empty ignore file must also remain caller-owned.
+    : > "$custom_repo/.superpowers/sdd/.gitignore"
+    (cd "$custom_repo" && "$SDD_SCRIPTS/sdd-workspace" plan.md >/dev/null)
+    if [[ -f "$custom_repo/.superpowers/sdd/.gitignore" && ! -s "$custom_repo/.superpowers/sdd/.gitignore" ]]; then
+        pass "sdd-workspace preserves an existing empty ignore file"
+    else
+        fail "sdd-workspace preserves an existing empty ignore file"
+    fi
+
     # --- task-brief lands in its plan's directory ---
     local brief_out brief_path
     brief_out="$(cd "$repo" && "$SDD_SCRIPTS/task-brief" plan-a.md 1)"
