@@ -1,3 +1,63 @@
+# AI 编程超能力（superpowers-zh）
+
+> 篝火出品 · 收录于篝火 App 应用区。本仓库 fork 自 [jnMetaCode/superpowers-zh](https://github.com/jnMetaCode/superpowers-zh)，版权归原作者，按 MIT 许可证分发。
+
+给 AI 编程助手装上一整套“资深工程师的工作方法”：先想清楚再写代码、先写测试、系统化调试、完成前必须验证。是英文项目 superpowers 的中文版，外加国内开发场景的技能。
+
+## 能做什么
+
+- 15 个翻译自 superpowers 的工作方法技能：头脑风暴（先把需求想清楚）、编写计划、执行计划、测试驱动开发、系统化调试、请求/接收代码审查、完成前验证、并行派遣子 Agent、Git Worktree、完成开发分支等。
+- 4 个中国开发者向的技能（需手动输入命令触发）：`/chinese-code-review`（适合国内团队沟通习惯的代码审查）、`/chinese-git-workflow`（适配 Gitee、Coding、极狐 GitLab、CNB）、`/chinese-documentation`（中文技术文档排版）、`/chinese-commit-conventions`（提交信息规范）。
+- 另有 `mcp-builder`（构建 MCP 服务器）和 `workflow-runner`（运行多角色 YAML 工作流）两个技能。
+- 效果举例（上游原文）：让 AI 做“批量导出”，装之前它直接写代码，装之后它先问格式、数据量、权限等关键问题，再给出 2 到 3 个方案，你确认后才动手。
+- 上游说明共 21 个技能，适配 26 款 AI 编程工具。
+
+## 怎么安装（Claude Code）
+
+压缩包 `superpowers-zh-campfire.zip` 解压后的结构：
+
+```
+skills/
+  brainstorming/   test-driven-development/   systematic-debugging/   …（共 21 个技能文件夹，每个含 SKILL.md）
+README.md
+LICENSE
+```
+
+1. 到本仓库 [Releases](https://github.com/campfire-code/superpowers-zh/releases/latest) 下载 `superpowers-zh-campfire.zip` 并解压。
+2. 把 `skills` 目录里的所有子文件夹复制到 `~/.claude/skills/`（没有就新建）。
+   - macOS / Linux：`mkdir -p ~/.claude/skills && cp -R skills/* ~/.claude/skills/`
+   - Windows：复制到 `C:\Users\你的用户名\.claude\skills\`
+3. 确认 `~/.claude/skills/brainstorming/SKILL.md` 存在，重启 Claude Code。
+
+重要说明（上游原话要点）：只复制 skills 目录是“低保真”安装，不会配置自动引导和 hooks，AI 可能不会在合适时机自动调用，需要你手动说“用头脑风暴技能”之类。要完整效果，上游推荐用 npm 一条命令：
+
+```
+npx superpowers-zh --global --tool claude
+```
+
+（需要 Node 20 或更新版本，联网。）Claude Code 也可以用插件方式：`claude plugin marketplace add jnMetaCode/superpowers-zh`，再 `claude plugin install superpowers-zh@superpowers-zh`。其他 AI 工具的装法见下方上游原文。
+
+## 怎么用
+
+装好后正常写代码需求即可，相关技能会在合适时机介入。也可以主动点名：
+
+- “用头脑风暴技能，先帮我想清楚这个功能再动手”
+- “按测试驱动开发的方式实现这个函数”
+- “/chinese-code-review”（对当前改动做中文代码审查）
+
+## 前置条件
+
+- 手动复制安装：无额外依赖。
+- npx 完整安装：Node 20+ 与网络。
+
+## 和上游的区别
+
+只加了本段中文说明与打包（zip 只含 `skills/` 技能目录，不含安装脚本、测试、网站），代码未改。上游本身就是中文版，本仓库没有再改写它的内容。
+
+---
+
+以下为上游原始说明（原文未改动）：
+
 # superpowers-zh（AI 编程超能力 · 中文增强版）
 
 🌐 **简体中文** | [繁體中文](README.zh-Hant.md) | [English (upstream)](https://github.com/obra/superpowers)
